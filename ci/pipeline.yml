@@ -1,0 +1,31 @@
+---
+resources:
+- name: docker-yarn-repo
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/dsosedov-vmw/docker-yarn
+- name: docker-hub-yarn
+  type: docker-image
+  icon: docker
+
+jobs:
+- name: release
+  public: true
+  plan:
+  - get: docker-yarn-repo
+    trigger: true
+  - task: build
+    config:
+      inputs:
+      - name: docker-yarn-repo
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: alpine
+      run:
+        path: docker
+        args:
+        - version
+  - put: docker-hub-yarn
